@@ -1,9 +1,14 @@
 [package]
 
-name = "hello_world"
+name = "rust-mpfr"
 version = "0.0.1"
-authors = [ "Your name <you@example.com>" ]
+authors = [ "Bartłomiej Kamiński <fizyk20@gmail.com>" ]
+repository = "https://github.com/fizyk20/rust-mpfr.git"
 
-[[bin]]
+[lib]
 
-name = "hello_world"
+name = "mpfr"
+crate-type = ["dylib"]
+
+[dependencies]
+libc = "0.1.8"
