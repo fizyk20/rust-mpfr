@@ -2,6 +2,7 @@
 #![allow(non_camel_case_types)]
 
 extern crate libc;
+extern crate gmp;
 
 macro_rules! gen_overloads_inner {
     ($tr:ident, $meth:ident, $T:ident) => {
