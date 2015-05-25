@@ -1,3 +1,6 @@
+#![crate_name = "mpfr_rust"]
+#![allow(non_camel_case_types)]
+
 extern crate libc;
 
 macro_rules! gen_overloads_inner {

@@ -1,13 +1,13 @@
 [package]
 
-name = "rust-mpfr"
+name = "mpfr-rust"
 version = "0.0.1"
 authors = [ "Bartłomiej Kamiński <fizyk20@gmail.com>" ]
 repository = "https://github.com/fizyk20/rust-mpfr.git"
 
 [lib]
 
-name = "mpfr"
+name = "mpfr_rust"
 crate-type = ["dylib"]
 
 [dependencies]
