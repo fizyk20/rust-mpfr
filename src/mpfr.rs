@@ -3,6 +3,7 @@ use gmp::mpz::mpz_srcptr;
 use gmp::mpq::mpq_srcptr;
 use gmp::mpf::mpf_srcptr;
 use std::mem::uninitialized;
+use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
 
 type mpfr_prec_t = c_int;
 type mpfr_sign_t = c_int;
@@ -61,6 +62,9 @@ extern "C" {
 	
 	// Initialization and assignment
 	fn mpfr_init_set(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	
+	// Comparison
+	fn mpfr_cmp(op1: mpfr_srcptr, op2: mpfr_srcptr) -> c_int;
 }
 
 pub struct Mpfr {
@@ -114,5 +118,33 @@ impl Mpfr {
     	unsafe {
     		mpfr_set_prec(&mut self.mpfr, precision as c_int);
     	}
+    }
+}
+
+impl Eq for Mpfr { }
+impl PartialEq for Mpfr {
+	fn eq(&self, other: &Mpfr) -> bool {
+		unsafe {
+			mpfr_cmp(&self.mpfr, &other.mpfr) == 0
+		}
+	}
+}
+
+impl Ord for Mpfr {
+    fn cmp(&self, other: &Mpfr) -> Ordering {
+        let cmp = unsafe { mpfr_cmp(&self.mpfr, &other.mpfr) };
+        if cmp == 0 {
+            Ordering::Equal
+        } else if cmp > 0 {
+            Ordering::Greater
+        } else {
+            Ordering::Less
+        }
+    }
+}
+
+impl PartialOrd for Mpfr {
+    fn partial_cmp(&self, other: &Mpfr) -> Option<Ordering> {
+    	Some(self.cmp(other))
     }
 }
