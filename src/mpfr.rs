@@ -8,6 +8,7 @@ type mpfr_prec_t = c_int;
 type mpfr_sign_t = c_int;
 type mpfr_exp_t = c_int;
 
+#[repr(C)]
 pub enum mpfr_rnd_t {
 	MPFR_RNDN=0,  /* round to nearest, with ties to even */
 	MPFR_RNDZ,    /* round toward zero */
@@ -57,6 +58,9 @@ extern "C" {
 	fn mpfr_set_inf(x: mpfr_ptr, sign: c_int);
 	fn mpfr_set_zero(x: mpfr_ptr, sign: c_int);
 	fn mpfr_swap(x: mpfr_ptr, y: mpfr_ptr);
+	
+	// Initialization and assignment
+	fn mpfr_init_set(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
 }
 
 pub struct Mpfr {
@@ -69,6 +73,16 @@ impl Drop for Mpfr {
     fn drop(&mut self) { unsafe { mpfr_clear(&mut self.mpfr) } }
 }
 
+impl Clone for Mpfr {
+    fn clone(&self) -> Mpfr {
+        unsafe {
+            let mut mpfr = uninitialized();
+            mpfr_init_set(&mut mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            Mpfr { mpfr: mpfr }
+        }
+    }
+}
+
 impl Mpfr {
     pub fn new(precision: c_int) -> Mpfr {
         unsafe {
@@ -76,5 +90,29 @@ impl Mpfr {
             mpfr_init2(&mut mpfr, precision);
             Mpfr { mpfr: mpfr }
         }
+    }
+    
+    pub fn get_default_prec() -> i64 {
+    	unsafe {
+    		mpfr_get_default_prec() as i64
+    	}
+    }
+    
+    pub fn set_default_prec(precision: i64) {
+    	unsafe {
+    		mpfr_set_default_prec(precision as c_int);
+    	}
+    }
+    
+    pub fn get_prec(&self) -> i64 {
+    	unsafe {
+    		mpfr_get_prec(&self.mpfr) as i64
+    	}
+    }
+    
+    pub fn set_prec(&mut self, precision: i64) {
+    	unsafe {
+    		mpfr_set_prec(&mut self.mpfr, precision as c_int);
+    	}
     }
 }
