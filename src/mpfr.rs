@@ -3,8 +3,10 @@ use gmp::mpz::{Mpz, mpz_ptr, mpz_srcptr};
 use gmp::mpq::{Mpq, mpq_srcptr};
 use gmp::mpf::{Mpf, mpf_ptr, mpf_srcptr};
 use std::mem::uninitialized;
+use std::cmp;
 use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
 use std::convert::{From, Into};
+use std::ops::{Add, Sub, Mul, Div, Neg};
 
 type mpfr_prec_t = c_int;
 type mpfr_sign_t = c_int;
@@ -68,6 +70,14 @@ extern "C" {
 	
 	// Comparison
 	fn mpfr_cmp(op1: mpfr_srcptr, op2: mpfr_srcptr) -> c_int;
+	fn mpfr_cmp_ui(op1: mpfr_srcptr, op2: c_ulong) -> c_int;
+	
+	// Arithmetic
+	fn mpfr_add(rop: mpfr_ptr, op1: mpfr_srcptr, op2: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_sub(rop: mpfr_ptr, op1: mpfr_srcptr, op2: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_mul(rop: mpfr_ptr, op1: mpfr_srcptr, op2: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_div(rop: mpfr_ptr, op1: mpfr_srcptr, op2: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_neg(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
 }
 
 pub struct Mpfr {
@@ -305,3 +315,68 @@ impl<'a> Into<Mpf> for &'a Mpfr {
 		}
 	}
 }
+
+impl<'a, 'b> Add<&'a Mpfr> for &'b Mpfr {
+    type Output = Mpfr;
+    fn add(self, other: &Mpfr) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new(cmp::max(self.get_prec() as usize,
+                                             other.get_prec() as usize) as c_ulong);
+            mpfr_add(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+}
+
+impl<'a, 'b> Sub<&'a Mpfr> for &'b Mpfr {
+    type Output = Mpfr;
+    fn sub(self, other: &Mpfr) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new(cmp::max(self.get_prec() as usize,
+                                             other.get_prec() as usize) as c_ulong);
+            mpfr_sub(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+}
+
+impl<'a, 'b> Mul<&'a Mpfr> for &'b Mpfr {
+    type Output = Mpfr;
+    fn mul(self, other: &Mpfr) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new(cmp::max(self.get_prec() as usize,
+                                             other.get_prec() as usize) as c_ulong);
+            mpfr_mul(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+}
+
+impl<'a, 'b> Div<&'a Mpfr> for &'b Mpfr {
+    type Output = Mpfr;
+    fn div(self, other: &Mpfr) -> Mpfr {
+        unsafe {
+            if mpfr_cmp_ui(&other.mpfr, 0) == 0 {
+                panic!("divide by zero")
+            }
+
+            let mut res = Mpfr::new(cmp::max(self.get_prec() as usize,
+                                             other.get_prec() as usize) as c_ulong);
+            mpfr_div(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+}
+
+impl<'b> Neg for &'b Mpfr {
+    type Output = Mpfr;
+    fn neg(self) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new(self.get_prec());
+            mpfr_neg(&mut res.mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+}
+
+gen_overloads!(Mpfr);
