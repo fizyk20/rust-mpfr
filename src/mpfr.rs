@@ -49,7 +49,6 @@ extern "C" {
 	fn mpfr_set_nan(x: mpfr_ptr);
 	fn mpfr_set_inf(x: mpfr_ptr, sign: c_int);
 	fn mpfr_set_zero(x: mpfr_ptr, sign: c_int);
-	fn mpfr_swap(x: mpfr_ptr, y: mpfr_ptr);
 	
 	// Initialization and assignment
 	fn mpfr_init_set(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
@@ -92,12 +91,36 @@ impl Clone for Mpfr {
 }
 
 impl Mpfr {
-    pub fn new(precision: c_int) -> Mpfr {
+    pub fn new(precision: u64) -> Mpfr {
         unsafe {
             let mut mpfr = uninitialized();
-            mpfr_init2(&mut mpfr, precision);
+            mpfr_init2(&mut mpfr, precision as c_int);
             Mpfr { mpfr: mpfr }
         }
+    }
+    
+    pub fn zero(sign: i32) -> Mpfr {
+    	unsafe {
+    		let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+    		mpfr_set_zero(&mut mpfr.mpfr, sign as c_int);
+    		mpfr
+    	}
+    }
+    
+    pub fn inf(sign: i32) -> Mpfr {
+    	unsafe {
+    		let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+    		mpfr_set_inf(&mut mpfr.mpfr, sign as c_int);
+    		mpfr
+    	}
+    }
+    
+    pub fn nan() -> Mpfr {
+    	unsafe {
+    		let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+    		mpfr_set_nan(&mut mpfr.mpfr);
+    		mpfr
+    	}
     }
     
     pub fn get_default_prec() -> u64 {
