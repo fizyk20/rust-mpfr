@@ -45,21 +45,19 @@ extern "C" {
 	fn mpfr_get_prec(x: mpfr_srcptr) -> mpfr_prec_t;
 	
 	// Assignment
+	fn mpfr_set(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_set_ui(rop: mpfr_ptr, op: c_ulong, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_set_si(rop: mpfr_ptr, op: c_long, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_set_d(rop: mpfr_ptr, op: c_double, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_set_z(rop: mpfr_ptr, op: mpz_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_set_q(rop: mpfr_ptr, op: mpq_srcptr, rnd: mpfr_rnd_t) -> c_int;
+	fn mpfr_set_f(rop: mpfr_ptr, op: mpf_srcptr, rnd: mpfr_rnd_t) -> c_int;
 	fn mpfr_set_ui_2exp(rop: mpfr_ptr, op: c_ulong, e: mpfr_exp_t, rnd: mpfr_rnd_t) -> c_int;
 	fn mpfr_set_si_2exp(rop: mpfr_ptr, op: c_long, e: mpfr_exp_t, rnd: mpfr_rnd_t) -> c_int;
 	fn mpfr_set_z_2exp(rop: mpfr_ptr, op: mpz_srcptr, e: mpfr_exp_t, rnd: mpfr_rnd_t) -> c_int;
 	fn mpfr_set_nan(x: mpfr_ptr);
 	fn mpfr_set_inf(x: mpfr_ptr, sign: c_int);
 	fn mpfr_set_zero(x: mpfr_ptr, sign: c_int);
-	
-	// Initialization and assignment
-	fn mpfr_init_set(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
-	fn mpfr_init_set_ui(rop: mpfr_ptr, op: c_ulong, rnd: mpfr_rnd_t) -> c_int;
-	fn mpfr_init_set_si(rop: mpfr_ptr, op: c_long, rnd: mpfr_rnd_t) -> c_int;
-	fn mpfr_init_set_d(rop: mpfr_ptr, op: c_double, rnd: mpfr_rnd_t) -> c_int;
-	fn mpfr_init_set_z(rop: mpfr_ptr, op: mpz_srcptr, rnd: mpfr_rnd_t) -> c_int;
-	fn mpfr_init_set_q(rop: mpfr_ptr, op: mpq_srcptr, rnd: mpfr_rnd_t) -> c_int;
-	fn mpfr_init_set_f(rop: mpfr_ptr, op: mpf_srcptr, rnd: mpfr_rnd_t) -> c_int;
 	
 	// Conversion
 	fn mpfr_get_ui(op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_ulong;
@@ -92,11 +90,9 @@ impl Drop for Mpfr {
 
 impl Clone for Mpfr {
     fn clone(&self) -> Mpfr {
-        unsafe {
-            let mut mpfr = uninitialized();
-            mpfr_init_set(&mut mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
-            Mpfr { mpfr: mpfr }
-        }
+        let mut mpfr = Mpfr::new(self.get_prec());
+        mpfr.set(self);
+        mpfr
     }
 }
 
@@ -107,6 +103,12 @@ impl Mpfr {
             mpfr_init2(&mut mpfr, precision as c_int);
             Mpfr { mpfr: mpfr }
         }
+    }
+    
+    pub fn set(&mut self, other: &Mpfr) {
+    	unsafe {
+    		mpfr_set(&mut self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
+    	}
     }
     
     pub fn new_u64_2exp(base: u64, exp: i32) -> Mpfr {
@@ -215,9 +217,9 @@ impl PartialOrd for Mpfr {
 impl From<i64> for Mpfr {
 	fn from(x: i64) -> Mpfr {
         unsafe {
-            let mut mpfr = uninitialized();
-            mpfr_init_set_si(&mut mpfr, x as c_long, mpfr_rnd_t::MPFR_RNDN);
-            Mpfr { mpfr: mpfr }
+            let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+            mpfr_set_si(&mut mpfr.mpfr, x as c_long, mpfr_rnd_t::MPFR_RNDN);
+            mpfr
         }
 	}
 }
@@ -225,9 +227,9 @@ impl From<i64> for Mpfr {
 impl From<u64> for Mpfr {
 	fn from(x: u64) -> Mpfr {
         unsafe {
-            let mut mpfr = uninitialized();
-            mpfr_init_set_ui(&mut mpfr, x as c_ulong, mpfr_rnd_t::MPFR_RNDN);
-            Mpfr { mpfr: mpfr }
+            let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+            mpfr_set_ui(&mut mpfr.mpfr, x as c_ulong, mpfr_rnd_t::MPFR_RNDN);
+            mpfr
         }
 	}
 }
@@ -235,9 +237,9 @@ impl From<u64> for Mpfr {
 impl From<f64> for Mpfr {
 	fn from(x: f64) -> Mpfr {
         unsafe {
-            let mut mpfr = uninitialized();
-            mpfr_init_set_d(&mut mpfr, x as c_double, mpfr_rnd_t::MPFR_RNDN);
-            Mpfr { mpfr: mpfr }
+            let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+            mpfr_set_d(&mut mpfr.mpfr, x as c_double, mpfr_rnd_t::MPFR_RNDN);
+            mpfr
         }
 	}
 }
@@ -245,9 +247,9 @@ impl From<f64> for Mpfr {
 impl From<Mpz> for Mpfr {
 	fn from(x: Mpz) -> Mpfr {
         unsafe {
-            let mut mpfr = uninitialized();
-            mpfr_init_set_z(&mut mpfr, &x.mpz, mpfr_rnd_t::MPFR_RNDN);
-            Mpfr { mpfr: mpfr }
+            let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+            mpfr_set_z(&mut mpfr.mpfr, &x.mpz, mpfr_rnd_t::MPFR_RNDN);
+            mpfr
         }
 	}
 }
@@ -255,9 +257,9 @@ impl From<Mpz> for Mpfr {
 impl From<Mpq> for Mpfr {
 	fn from(x: Mpq) -> Mpfr {
         unsafe {
-            let mut mpfr = uninitialized();
-            mpfr_init_set_q(&mut mpfr, &x.mpq, mpfr_rnd_t::MPFR_RNDN);
-            Mpfr { mpfr: mpfr }
+            let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+            mpfr_set_q(&mut mpfr.mpfr, &x.mpq, mpfr_rnd_t::MPFR_RNDN);
+            mpfr
         }
 	}
 }
@@ -265,9 +267,9 @@ impl From<Mpq> for Mpfr {
 impl From<Mpf> for Mpfr {
 	fn from(x: Mpf) -> Mpfr {
         unsafe {
-            let mut mpfr = uninitialized();
-            mpfr_init_set_f(&mut mpfr, &x.mpf, mpfr_rnd_t::MPFR_RNDN);
-            Mpfr { mpfr: mpfr }
+            let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+            mpfr_set_f(&mut mpfr.mpfr, &x.mpf, mpfr_rnd_t::MPFR_RNDN);
+            mpfr
         }
 	}
 }
