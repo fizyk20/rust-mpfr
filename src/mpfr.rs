@@ -1,4 +1,4 @@
-use libc::{c_char, c_int, c_ulong, c_long, c_double, c_void};
+use libc::{c_int, c_ulong, c_long, c_double, c_void};
 use gmp::mpz::{Mpz, mpz_ptr, mpz_srcptr};
 use gmp::mpq::{Mpq, mpq_srcptr};
 use gmp::mpf::{Mpf, mpf_ptr, mpf_srcptr};
@@ -97,6 +97,30 @@ impl Mpfr {
             mpfr_init2(&mut mpfr, precision as c_int);
             Mpfr { mpfr: mpfr }
         }
+    }
+    
+    pub fn new_u64_2exp(base: u64, exp: i32) -> Mpfr {
+    	unsafe {
+    		let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+    		mpfr_set_ui_2exp(&mut mpfr.mpfr, base as c_ulong, exp as mpfr_exp_t, mpfr_rnd_t::MPFR_RNDN);
+    		mpfr
+    	}
+    }
+    
+    pub fn new_i64_2exp(base: i64, exp: i32) -> Mpfr {
+    	unsafe {
+    		let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+    		mpfr_set_si_2exp(&mut mpfr.mpfr, base as c_long, exp as mpfr_exp_t, mpfr_rnd_t::MPFR_RNDN);
+    		mpfr
+    	}
+    }
+    
+    pub fn new_mpz_2exp(base: &Mpz, exp: i32) -> Mpfr {
+    	unsafe {
+    		let mut mpfr = Mpfr::new(Mpfr::get_default_prec());
+    		mpfr_set_z_2exp(&mut mpfr.mpfr, &base.mpz, exp as mpfr_exp_t, mpfr_rnd_t::MPFR_RNDN);
+    		mpfr
+    	}
     }
     
     pub fn zero(sign: i32) -> Mpfr {
