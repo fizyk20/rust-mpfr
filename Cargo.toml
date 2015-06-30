@@ -17,4 +17,4 @@ libc = "0.1.8"
 
 [dependencies.rust-gmp]
 git = "https://github.com/fizyk20/rust-gmp.git"
-branch = "rust1.0"
+branch = "master"
