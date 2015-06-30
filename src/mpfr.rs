@@ -320,7 +320,7 @@ impl<'a> Into<Mpz> for &'a Mpfr {
 impl<'a> Into<Mpf> for &'a Mpfr {
 	fn into(self) -> Mpf {
 		unsafe {
-			let mut result = Mpf::new(self.get_prec()); 
+			let mut result = Mpf::new(self.get_prec() as c_ulong); 
 			mpfr_get_f(&mut result.mpf, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
 			result
 		}
@@ -331,8 +331,8 @@ impl<'a, 'b> Add<&'a Mpfr> for &'b Mpfr {
     type Output = Mpfr;
     fn add(self, other: &Mpfr) -> Mpfr {
         unsafe {
-            let mut res = Mpfr::new2(cmp::max(self.get_prec() as usize,
-                                             other.get_prec() as usize) as c_ulong);
+            let mut res = Mpfr::new2(cmp::max(self.get_prec(),
+                                             other.get_prec()) as u64);
             mpfr_add(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
             res
         }
@@ -343,8 +343,8 @@ impl<'a, 'b> Sub<&'a Mpfr> for &'b Mpfr {
     type Output = Mpfr;
     fn sub(self, other: &Mpfr) -> Mpfr {
         unsafe {
-            let mut res = Mpfr::new2(cmp::max(self.get_prec() as usize,
-                                             other.get_prec() as usize) as c_ulong);
+            let mut res = Mpfr::new2(cmp::max(self.get_prec(),
+                                             other.get_prec()) as u64);
             mpfr_sub(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
             res
         }
@@ -355,8 +355,8 @@ impl<'a, 'b> Mul<&'a Mpfr> for &'b Mpfr {
     type Output = Mpfr;
     fn mul(self, other: &Mpfr) -> Mpfr {
         unsafe {
-            let mut res = Mpfr::new2(cmp::max(self.get_prec() as usize,
-                                             other.get_prec() as usize) as c_ulong);
+            let mut res = Mpfr::new2(cmp::max(self.get_prec(),
+                                             other.get_prec()) as u64);
             mpfr_mul(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
             res
         }
@@ -371,8 +371,8 @@ impl<'a, 'b> Div<&'a Mpfr> for &'b Mpfr {
                 panic!("divide by zero")
             }
 
-            let mut res = Mpfr::new2(cmp::max(self.get_prec() as usize,
-                                             other.get_prec() as usize) as c_ulong);
+            let mut res = Mpfr::new2(cmp::max(self.get_prec(),
+                                             other.get_prec()) as u64);
             mpfr_div(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
             res
         }
