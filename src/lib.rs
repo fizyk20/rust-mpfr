@@ -1,4 +1,4 @@
-#![crate_name = "mpfr_rust"]
+#![crate_name = "rust_mpfr"]
 #![allow(non_camel_case_types)]
 
 extern crate libc;
