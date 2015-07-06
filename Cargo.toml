@@ -1,5 +1,4 @@
 [package]
-
 name = "rust-mpfr"
 version = "0.1.0"
 authors = [ "Bartłomiej Kamiński <fizyk20@gmail.com>" ]
@@ -8,13 +7,9 @@ license = "MIT"
 repository = "https://github.com/fizyk20/rust-mpfr.git"
 
 [lib]
-
 name = "rust_mpfr"
 crate-type = ["dylib"]
 
 [dependencies]
 libc = "0.1.8"
-
-[dependencies.rust-gmp]
-git = "https://github.com/fizyk20/rust-gmp.git"
-branch = "master"
+rust-gmp = "0.2.3"
