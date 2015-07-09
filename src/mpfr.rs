@@ -1,11 +1,12 @@
-use libc::{c_int, c_ulong, c_long, c_double, c_void};
-use gmp::mpz::{Mpz, mpz_ptr, mpz_srcptr};
-use gmp::mpq::{Mpq, mpq_srcptr};
 use gmp::mpf::{Mpf, mpf_ptr, mpf_srcptr};
-use std::mem::uninitialized;
-use std::cmp;
+use gmp::mpq::{Mpq, mpq_srcptr};
+use gmp::mpz::{Mpz, mpz_ptr, mpz_srcptr};
+use libc::{c_char, c_int, c_ulong, c_long, c_double, c_void};
 use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
+use std::cmp;
 use std::convert::{From, Into};
+use std::ffi::CString;
+use std::mem::uninitialized;
 use std::ops::{Add, Sub, Mul, Div, Neg};
 
 type mpfr_prec_t = c_long;
@@ -59,6 +60,7 @@ extern "C" {
 	fn mpfr_set_nan(x: mpfr_ptr);
 	fn mpfr_set_inf(x: mpfr_ptr, sign: c_int);
 	fn mpfr_set_zero(x: mpfr_ptr, sign: c_int);
+    fn mpfr_set_str(rop: mpfr_ptr, s: *const c_char, base: c_int, rnd: mpfr_rnd_t) -> c_int;
 	
 	// Conversion
 	fn mpfr_get_ui(op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_ulong;
@@ -131,7 +133,37 @@ impl Mpfr {
             Mpfr { mpfr: mpfr }
         }
     }
-    
+
+    pub fn new_from_str<T: Into<Vec<u8>>>(s: T, base: usize) -> Option<Mpfr> {
+        let c_string = match CString::new(s) {
+            Ok(c_string) => c_string,
+            Err(..) => return None
+        };
+        unsafe {
+            let mut mpfr = Mpfr::new();
+            if mpfr_set_str(&mut mpfr.mpfr, c_string.as_ptr(), base as c_int, mpfr_rnd_t::MPFR_RNDN) == 0 {
+                Some(mpfr)
+            } else {
+                None
+            }
+        }
+    }
+
+    pub fn new2_from_str<T: Into<Vec<u8>>>(precision: usize, s: T, base: usize) -> Option<Mpfr> {
+        let c_string = match CString::new(s) {
+            Ok(c_string) => c_string,
+            Err(..) => return None
+        };
+        unsafe {
+            let mut mpfr = Mpfr::new2(precision);
+            if mpfr_set_str(&mut mpfr.mpfr, c_string.as_ptr(), base as c_int, mpfr_rnd_t::MPFR_RNDN) == 0 {
+                Some(mpfr)
+            } else {
+                None
+            }
+        }
+    }
+
     pub fn set(&mut self, other: &Mpfr) {
     	unsafe {
     		mpfr_set(&mut self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
