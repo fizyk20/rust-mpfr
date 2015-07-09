@@ -8,7 +8,7 @@ repository = "https://github.com/fizyk20/rust-mpfr.git"
 
 [lib]
 name = "rust_mpfr"
-crate-type = ["dylib"]
+crate-type = ["rlib", "dylib"]
 
 [dependencies]
 libc = "0.1.8"
