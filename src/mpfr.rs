@@ -92,6 +92,9 @@ extern "C" {
     fn mpfr_pow(rop: mpfr_ptr, op1: mpfr_srcptr, op2: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_exp(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_log(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+    fn mpfr_gamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+    fn mpfr_lngamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+    fn mpfr_lgamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
 }
 
 pub struct Mpfr {
@@ -279,6 +282,30 @@ impl Mpfr {
         unsafe {
             let mut res = Mpfr::new2(self.get_prec());
             mpfr_log(&mut res.mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+
+    pub fn gamma(&self) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new2(self.get_prec());
+            mpfr_gamma(&mut res.mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+
+    pub fn lngamma(&self) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new2(self.get_prec());
+            mpfr_lngamma(&mut res.mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+
+    pub fn lgamma(&self) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new2(self.get_prec());
+            mpfr_lgamma(&mut res.mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
             res
         }
     }
