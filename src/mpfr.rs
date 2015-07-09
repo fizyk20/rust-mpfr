@@ -92,6 +92,7 @@ extern "C" {
     fn mpfr_cbrt(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_root(rop: mpfr_ptr, op: mpfr_srcptr, k: c_ulong, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_pow(rop: mpfr_ptr, op1: mpfr_srcptr, op2: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+    fn mpfr_abs(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_exp(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_log(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_gamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
@@ -298,6 +299,14 @@ impl Mpfr {
         unsafe {
             let mut res = Mpfr::new2(self.get_prec());
             mpfr_pow(&mut res.mpfr, &self.mpfr, &other.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            res
+        }
+    }
+
+    pub fn abs(&self) -> Mpfr {
+        unsafe {
+            let mut res = Mpfr::new2(self.get_prec());
+            mpfr_abs(&mut res.mpfr, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
             res
         }
     }

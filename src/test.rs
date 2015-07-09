@@ -175,3 +175,11 @@ fn test_new2_from_str() {
         assert!(a - b < From::from(epsilon) || c - d > From::from(-epsilon));
     }
 }
+
+#[test]
+fn test_abs() {
+    let a: Mpfr = From::<i64>::from(1);
+    let b: Mpfr = From::<i64>::from(-1);
+
+    assert!(a.abs() == b.abs());
+}
