@@ -139,3 +139,47 @@ fn test_exp_log() {
 	assert!(a.exp() == b);
 	assert!(b.log() == a);
 }
+
+#[test]
+fn test_new_from_str() {
+    let a: Mpfr = From::<i64>::from(1);
+    let b: Mpfr = Mpfr::new_from_str("1", 10).unwrap();
+
+    assert!(a == b);
+
+    let a: Mpfr = From::<f64>::from(1.234);
+    let b: Mpfr = Mpfr::new_from_str("1.234", 10).unwrap();
+
+    assert!(a == b);
+}
+
+#[test]
+fn test_new2_from_str() {
+    let epsilon = 1e-100f64;
+
+    {
+        let a: Mpfr = From::<i64>::from(1);
+        let b: Mpfr = Mpfr::new2_from_str(200, "1", 10).unwrap();
+        let c = a.clone();
+        let d = b.clone();
+
+        assert!(a - b < From::from(epsilon) || c - d > From::from(-epsilon));
+    }
+
+    {
+        let a: Mpfr = From::<f64>::from(1.234);
+        let b: Mpfr = Mpfr::new2_from_str(200, "1.234", 10).unwrap();
+        let c = a.clone();
+        let d = b.clone();
+
+        assert!(a - b < From::from(epsilon) || c - d > From::from(-epsilon));
+    }
+}
+
+#[test]
+fn test_abs() {
+    let a: Mpfr = From::<i64>::from(1);
+    let b: Mpfr = From::<i64>::from(-1);
+
+    assert!(a.abs() == b.abs());
+}
