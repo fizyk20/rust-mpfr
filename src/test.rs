@@ -53,7 +53,11 @@ fn test_add() {
 	let b: Mpfr = From::<i64>::from(20);
 	let result: Mpfr = From::<i64>::from(35);
 
-	assert!(a + b == result);
+	assert!(&a + b == result);
+	assert!(&a + 20 == result);
+	assert!(20 + &a == result);
+	assert!(&a + 20.0 == result);
+	assert!(20.0 + &a == result);
 }
 
 #[test]
@@ -62,7 +66,11 @@ fn test_sub() {
 	let b: Mpfr = From::<i64>::from(20);
 	let result: Mpfr = From::<i64>::from(-5);
 
-	assert!(a - b == result);
+	assert!(&a - &b == result);
+	assert!(&a - 20 == result);
+	assert!(15 - &b == result);
+	assert!(&a - 20.0 == result);
+	assert!(15.0 - &b == result);
 }
 
 #[test]
@@ -71,15 +79,11 @@ fn test_mul() {
 	let b: Mpfr = From::<i64>::from(20);
 	let result: Mpfr = From::<i64>::from(300);
 
-	assert!(a * b == result);
-}
-
-#[test]
-fn test_mul_d() {
-	let a: Mpfr = From::<i64>::from(15);
-	let result: Mpfr = From::<f64>::from(37.5);
-
-	assert!(&a * 2.5 == result);
+	assert!(&a * b == result);
+	assert!(&a * 20 == result);
+	assert!(20 * &a == result);
+	assert!(&a * 20.0 == result);
+	assert!(20.0 * &a == result);
 }
 
 #[test]
@@ -88,15 +92,11 @@ fn test_div() {
 	let b: Mpfr = From::<i64>::from(20);
 	let result: Mpfr = From::<f64>::from(0.75);
 
-	assert!(a / b == result);
-}
-
-#[test]
-fn test_div_d() {
-	let a: Mpfr = From::<i64>::from(15);
-	let result: Mpfr = From::<i64>::from(3);
-
-	assert!(&a / 5.0 == result);
+	assert!(&a / &b == result);
+	assert!(&a / 20 == result);
+	assert!(15 / &b == result);
+	assert!(&a / 20.0 == result);
+	assert!(15.0 / &b == result);
 }
 
 #[test]
