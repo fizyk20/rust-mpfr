@@ -49,7 +49,6 @@ extern "C" {
 	fn mpfr_get_default_prec() -> mpfr_prec_t;
 	fn mpfr_set_prec(x: mpfr_ptr, prec: mpfr_prec_t);
 	fn mpfr_get_prec(x: mpfr_srcptr) -> mpfr_prec_t;
-    fn mpfr_snprintf(buffer: *const c_char, length: size_t, string: *const u8, ...) -> c_int;
 	
 	// Assignment
 	fn mpfr_set(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
@@ -113,6 +112,9 @@ extern "C" {
     fn mpfr_gamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_lngamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_lgamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+    
+    // Formatted output
+    fn mpfr_snprintf(buffer: *const c_char, length: size_t, string: *const u8, ...) -> c_int;
 }
 
 pub struct Mpfr {
