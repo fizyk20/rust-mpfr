@@ -125,6 +125,9 @@ impl ToString for Mpfr {
     fn to_string(&self) -> String {
         unsafe {
             let length = mpfr_snprintf(ptr::null(), 0, b"%.Re\0".as_ptr(), &self.mpfr);
+            if length < 0 {
+            	return "".to_string();
+            }
             let buff : Vec<c_char> = Vec::with_capacity((length + 1) as usize);
             mpfr_snprintf(buff.as_ptr(),
                           (length + 1) as size_t,
