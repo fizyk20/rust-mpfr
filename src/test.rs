@@ -177,6 +177,20 @@ fn test_new2_from_str() {
 }
 
 #[test]
+fn test_to_string() {
+    let a: Mpfr = Mpfr::new2_from_str(128, "1.23456789123456789123456789123456789e5", 10).unwrap();
+
+    assert_eq!(a.to_string(), "1.23456789123456789123456789123456789e+05");
+}
+
+#[test]
+fn test_to_string_new2_from_str() {
+    let a: Mpfr = Mpfr::new2_from_str(128, "1.23456789123456789123456789123456789e5", 10).unwrap();
+
+    assert!(a == Mpfr::new2_from_str(128, a.to_string(), 10).unwrap());
+}
+
+#[test]
 fn test_abs() {
     let a: Mpfr = From::<i64>::from(1);
     let b: Mpfr = From::<i64>::from(-1);

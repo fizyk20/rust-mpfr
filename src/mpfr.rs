@@ -1,13 +1,17 @@
 use gmp::mpf::{Mpf, mpf_ptr, mpf_srcptr};
 use gmp::mpq::{Mpq, mpq_srcptr};
 use gmp::mpz::{Mpz, mpz_ptr, mpz_srcptr};
-use libc::{c_char, c_int, c_ulong, c_long, c_double, c_void};
+use libc::{c_char, c_int, c_ulong, c_long, c_double, c_void, size_t};
+use std::ffi::{CStr};
 use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
 use std::cmp;
 use std::convert::{From, Into};
 use std::ffi::CString;
 use std::mem::uninitialized;
 use std::ops::{Add, Sub, Mul, Div, Neg};
+use std::str;
+use std::string::{ToString};
+use std::ptr;
 
 type mpfr_prec_t = c_long;
 type mpfr_sign_t = c_int;
@@ -108,10 +112,31 @@ extern "C" {
     fn mpfr_gamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_lngamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
     fn mpfr_lgamma(rop: mpfr_ptr, op: mpfr_srcptr, rnd: mpfr_rnd_t) -> c_int;
+    
+    // Formatted output
+    fn mpfr_snprintf(buffer: *const c_char, length: size_t, string: *const u8, ...) -> c_int;
 }
 
 pub struct Mpfr {
     pub mpfr: mpfr_struct,
+}
+
+impl ToString for Mpfr {
+    fn to_string(&self) -> String {
+        unsafe {
+            let length = mpfr_snprintf(ptr::null(), 0, b"%.Re\0".as_ptr(), &self.mpfr);
+            if length < 0 {
+            	return "".to_string();
+            }
+            let buff : Vec<c_char> = Vec::with_capacity((length + 1) as usize);
+            mpfr_snprintf(buff.as_ptr(),
+                          (length + 1) as size_t,
+                          b"%.Re\0".as_ptr(),
+                          &self.mpfr);
+            let s = CStr::from_ptr(buff.as_ptr());
+            str::from_utf8(s.to_bytes()).unwrap().to_string()
+        }
+    }
 }
 
 unsafe impl Send for Mpfr { }
