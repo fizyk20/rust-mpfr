@@ -1,3 +1,5 @@
+use rustc_serialize::json;
+
 use super::mpfr::Mpfr;
 
 #[test]
@@ -196,4 +198,16 @@ fn test_abs() {
     let b: Mpfr = From::<i64>::from(-1);
 
     assert!(a.abs() == b.abs());
+}
+
+#[test]
+fn test_rustc_serialize() {
+    #[derive(RustcDecodable, RustcEncodable, PartialEq)]
+    struct Test {
+        price: Mpfr,
+    }
+    let a: Test = Test { price: From::<f64>::from(0.75) };
+    assert_eq!(json::encode(&a).unwrap(), "{\"price\":\"7.5e-01\"}");
+    let b: Test = json::decode("{\"price\": \"0.75\"}").unwrap();
+    assert!(a == b);
 }

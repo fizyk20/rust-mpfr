@@ -2,6 +2,7 @@ use gmp::mpf::{Mpf, mpf_ptr, mpf_srcptr};
 use gmp::mpq::{Mpq, mpq_srcptr};
 use gmp::mpz::{Mpz, mpz_ptr, mpz_srcptr};
 use libc::{c_char, c_int, c_ulong, c_long, c_double, c_void, size_t};
+use rustc_serialize::{Decodable, Decoder, Encodable, Encoder};
 use std::ffi::CStr;
 use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
 use std::cmp;
@@ -1198,3 +1199,20 @@ impl Neg for Mpfr {
 }
 
 gen_overloads!(Mpfr);
+
+// rustc_serialize support
+impl Decodable for Mpfr {
+    fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
+        let s = try!(d.read_str());
+        match Mpfr::new_from_str(s, 10) {
+            Some(val) => Ok(val),
+            None => Err(d.error("Cannot parse decimal float")),
+        }
+    }
+}
+
+impl Encodable for Mpfr {
+    fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
+        s.emit_str(&self.to_string())
+    }
+}

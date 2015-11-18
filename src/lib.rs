@@ -3,6 +3,7 @@
 
 extern crate libc;
 extern crate gmp;
+extern crate rustc_serialize;
 
 macro_rules! gen_overloads_inner {
     ($tr:ident, $meth:ident, $T:ident) => {
