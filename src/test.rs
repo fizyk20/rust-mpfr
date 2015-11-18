@@ -2,11 +2,11 @@ use super::mpfr::Mpfr;
 
 #[test]
 fn test_set() {
-	let mut a : Mpfr = From::<i64>::from(1000);
-	let b : Mpfr = From::<i64>::from(5000);
-	assert!(a != b);
-	a.set(&b);
-	assert!(a == b);
+    let mut a: Mpfr = From::<i64>::from(1000);
+    let b: Mpfr = From::<i64>::from(5000);
+    assert!(a != b);
+    a.set(&b);
+    assert!(a == b);
 }
 
 #[test]
@@ -49,95 +49,95 @@ fn test_clone() {
 
 #[test]
 fn test_add() {
-	let a: Mpfr = From::<i64>::from(15);
-	let b: Mpfr = From::<i64>::from(20);
-	let result: Mpfr = From::<i64>::from(35);
+    let a: Mpfr = From::<i64>::from(15);
+    let b: Mpfr = From::<i64>::from(20);
+    let result: Mpfr = From::<i64>::from(35);
 
-	assert!(&a + b == result);
-	assert!(&a + 20 == result);
-	assert!(20 + &a == result);
-	assert!(&a + 20.0 == result);
-	assert!(20.0 + &a == result);
+    assert!(&a + b == result);
+    assert!(&a + 20 == result);
+    assert!(20 + &a == result);
+    assert!(&a + 20.0 == result);
+    assert!(20.0 + &a == result);
 }
 
 #[test]
 fn test_sub() {
-	let a: Mpfr = From::<i64>::from(15);
-	let b: Mpfr = From::<i64>::from(20);
-	let result: Mpfr = From::<i64>::from(-5);
+    let a: Mpfr = From::<i64>::from(15);
+    let b: Mpfr = From::<i64>::from(20);
+    let result: Mpfr = From::<i64>::from(-5);
 
-	assert!(&a - &b == result);
-	assert!(&a - 20 == result);
-	assert!(15 - &b == result);
-	assert!(&a - 20.0 == result);
-	assert!(15.0 - &b == result);
+    assert!(&a - &b == result);
+    assert!(&a - 20 == result);
+    assert!(15 - &b == result);
+    assert!(&a - 20.0 == result);
+    assert!(15.0 - &b == result);
 }
 
 #[test]
 fn test_mul() {
-	let a: Mpfr = From::<i64>::from(15);
-	let b: Mpfr = From::<i64>::from(20);
-	let result: Mpfr = From::<i64>::from(300);
+    let a: Mpfr = From::<i64>::from(15);
+    let b: Mpfr = From::<i64>::from(20);
+    let result: Mpfr = From::<i64>::from(300);
 
-	assert!(&a * b == result);
-	assert!(&a * 20 == result);
-	assert!(20 * &a == result);
-	assert!(&a * 20.0 == result);
-	assert!(20.0 * &a == result);
+    assert!(&a * b == result);
+    assert!(&a * 20 == result);
+    assert!(20 * &a == result);
+    assert!(&a * 20.0 == result);
+    assert!(20.0 * &a == result);
 }
 
 #[test]
 fn test_div() {
-	let a: Mpfr = From::<i64>::from(15);
-	let b: Mpfr = From::<i64>::from(20);
-	let result: Mpfr = From::<f64>::from(0.75);
+    let a: Mpfr = From::<i64>::from(15);
+    let b: Mpfr = From::<i64>::from(20);
+    let result: Mpfr = From::<f64>::from(0.75);
 
-	assert!(&a / &b == result);
-	assert!(&a / 20 == result);
-	assert!(15 / &b == result);
-	assert!(&a / 20.0 == result);
-	assert!(15.0 / &b == result);
+    assert!(&a / &b == result);
+    assert!(&a / 20 == result);
+    assert!(15 / &b == result);
+    assert!(&a / 20.0 == result);
+    assert!(15.0 / &b == result);
 }
 
 #[test]
 fn test_rounding() {
-	let a: Mpfr = From::<f64>::from(2.4999);
-	let b: Mpfr = From::<f64>::from(2.5);
-	let two: Mpfr = From::<i64>::from(2);
-	let three: Mpfr = From::<i64>::from(3);
+    let a: Mpfr = From::<f64>::from(2.4999);
+    let b: Mpfr = From::<f64>::from(2.5);
+    let two: Mpfr = From::<i64>::from(2);
+    let three: Mpfr = From::<i64>::from(3);
 
-	assert!(a.floor() == two);
-	assert!(a.round() == two);
-	assert!(a.ceil() == three);
+    assert!(a.floor() == two);
+    assert!(a.round() == two);
+    assert!(a.ceil() == three);
 
-	assert!(b.floor() == two);
-	assert!(b.round() == three);
-	assert!(b.ceil() == three);
+    assert!(b.floor() == two);
+    assert!(b.round() == three);
+    assert!(b.ceil() == three);
 }
 
 #[test]
 fn test_pow_root() {
-	let a: Mpfr = From::<f64>::from(2.654);
-	let two: Mpfr = From::<i64>::from(2);
-	let three: Mpfr = From::<i64>::from(3);
-	let asq = &a*&a;
-	let acb = &a*&a*&a;
+    let a: Mpfr = From::<f64>::from(2.654);
+    let two: Mpfr = From::<i64>::from(2);
+    let three: Mpfr = From::<i64>::from(3);
+    let asq = &a * &a;
+    let acb = &a * &a * &a;
 
-	assert!(a.pow(&two) == asq);
-	assert!(a.pow(&three) == acb);
-	assert!(asq.sqrt() == a);
-	assert!(acb.cbrt() == a);
-	assert!(asq.root(2) == a);
-	assert!(acb.root(3) == a);
+    assert!(a.pow(&two) == asq);
+    assert!(a.pow(&three) == acb);
+    assert!(asq.sqrt() == a);
+    assert!(acb.cbrt() == a);
+    assert!(asq.root(2) == a);
+    assert!(acb.root(3) == a);
 }
 
 #[test]
 fn test_exp_log() {
-	let a: Mpfr = From::<i64>::from(1);
-	let b: Mpfr = From::<f64>::from(2.718281828459045);
+    let a: Mpfr = From::<i64>::from(1);
+    let b: Mpfr = From::<f64>::from(2.718281828459045);
 
-	assert!(a.exp() == b);
-	assert!(b.log() == a);
+    assert!(a.exp() == b);
+    assert!(b.log() == a);
 }
 
 #[test]
