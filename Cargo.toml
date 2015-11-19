@@ -13,3 +13,4 @@ crate-type = ["rlib", "dylib"]
 [dependencies]
 libc = "*"
 rust-gmp = "*"
+rustc-serialize = "~0.3"
