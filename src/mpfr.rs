@@ -8,10 +8,10 @@ use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
 use std::cmp;
 use std::convert::{From, Into};
 use std::ffi::CString;
-use std::fmt;
 use std::mem::uninitialized;
 use std::ops::{Add, Sub, Mul, Div, Neg};
 use std::str;
+use std::string::ToString;
 use std::ptr;
 
 type mpfr_prec_t = c_long;
@@ -122,19 +122,12 @@ pub struct Mpfr {
     pub mpfr: mpfr_struct,
 }
 
-impl fmt::Debug for Mpfr {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(&self, fmt)
-    }
-}
-
-impl fmt::Display for Mpfr {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+impl ToString for Mpfr {
+    fn to_string(&self) -> String {
         unsafe {
             let length = mpfr_snprintf(ptr::null(), 0, b"%.Re\0".as_ptr(), &self.mpfr);
             if length < 0 {
-                // Maybe fmt.write_str("@uninnitialized@")
-                return Ok(())
+                return "".to_string();
             }
             let buff: Vec<c_char> = Vec::with_capacity((length + 1) as usize);
             mpfr_snprintf(buff.as_ptr(),
@@ -142,7 +135,7 @@ impl fmt::Display for Mpfr {
                           b"%.Re\0".as_ptr(),
                           &self.mpfr);
             let s = CStr::from_ptr(buff.as_ptr());
-            fmt.write_str(str::from_utf8_unchecked(s.to_bytes()))
+            str::from_utf8(s.to_bytes()).unwrap().to_string()
         }
     }
 }

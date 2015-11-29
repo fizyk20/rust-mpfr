@@ -185,20 +185,6 @@ fn test_mpfr_macro() {
 }
 
 #[test]
-fn test_debug() {
-    let a: Mpfr = Mpfr::new2_from_str(128, "1.23456789123456789123456789123456789e5", 10).unwrap();
-
-    assert_eq!(format!("{:?}", a), "1.23456789123456789123456789123456789e+05");
-}
-
-#[test]
-fn test_display() {
-    let a: Mpfr = Mpfr::new2_from_str(128, "1.23456789123456789123456789123456789e5", 10).unwrap();
-
-    assert_eq!(format!("{}", a), "1.23456789123456789123456789123456789e+05");
-}
-
-#[test]
 fn test_to_string() {
     let a: Mpfr = Mpfr::new2_from_str(128, "1.23456789123456789123456789123456789e5", 10).unwrap();
 
