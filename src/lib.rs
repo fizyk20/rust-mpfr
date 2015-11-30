@@ -35,8 +35,8 @@ macro_rules! gen_overloads {
 
 #[macro_export]
 macro_rules! mpfr {
-    ($t:tt) => {
-        $crate::mpfr::Mpfr::new_from_str(stringify!($t), 10).expect("Invalid floating point literal")
+    ($lit:expr) => {
+        $crate::mpfr::Mpfr::new_from_str(stringify!($lit), 10).expect("Invalid floating point literal")
     }
 }
 
