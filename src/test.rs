@@ -182,6 +182,8 @@ fn test_new2_from_str() {
 fn test_mpfr_macro() {
     let a: Mpfr = Mpfr::new_from_str("0.123456789012345678901234567890", 10).unwrap();
     assert_eq!(mpfr!(0.123456789012345678901234567890), a);
+    let b: Mpfr = Mpfr::new_from_str("-5.", 10).unwrap();
+    assert_eq!(mpfr!(-5.), b);
 }
 
 #[test]
