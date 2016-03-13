@@ -248,7 +248,7 @@ impl Mpfr {
         unsafe {
             let mut mpfr = Mpfr::new();
             mpfr_set_z_2exp(&mut mpfr.mpfr,
-                            &base.mpz,
+                            base.inner(),
                             exp as mpfr_exp_t,
                             mpfr_rnd_t::MPFR_RNDN);
             mpfr
@@ -476,7 +476,7 @@ impl From<Mpz> for Mpfr {
     fn from(x: Mpz) -> Mpfr {
         unsafe {
             let mut mpfr = Mpfr::new();
-            mpfr_set_z(&mut mpfr.mpfr, &x.mpz, mpfr_rnd_t::MPFR_RNDN);
+            mpfr_set_z(&mut mpfr.mpfr, x.inner(), mpfr_rnd_t::MPFR_RNDN);
             mpfr
         }
     }
@@ -486,7 +486,7 @@ impl From<Mpq> for Mpfr {
     fn from(x: Mpq) -> Mpfr {
         unsafe {
             let mut mpfr = Mpfr::new();
-            mpfr_set_q(&mut mpfr.mpfr, &x.mpq, mpfr_rnd_t::MPFR_RNDN);
+            mpfr_set_q(&mut mpfr.mpfr, x.inner(), mpfr_rnd_t::MPFR_RNDN);
             mpfr
         }
     }
@@ -496,7 +496,7 @@ impl From<Mpf> for Mpfr {
     fn from(x: Mpf) -> Mpfr {
         unsafe {
             let mut mpfr = Mpfr::new();
-            mpfr_set_f(&mut mpfr.mpfr, &x.mpf, mpfr_rnd_t::MPFR_RNDN);
+            mpfr_set_f(&mut mpfr.mpfr, x.inner(), mpfr_rnd_t::MPFR_RNDN);
             mpfr
         }
     }
@@ -524,7 +524,7 @@ impl<'a> Into<Mpz> for &'a Mpfr {
     fn into(self) -> Mpz {
         unsafe {
             let mut result = Mpz::new();
-            mpfr_get_z(&mut result.mpz, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            mpfr_get_z(result.inner_mut(), &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
             result
         }
     }
@@ -534,7 +534,7 @@ impl<'a> Into<Mpf> for &'a Mpfr {
     fn into(self) -> Mpf {
         unsafe {
             let mut result = Mpf::new(self.get_prec());
-            mpfr_get_f(&mut result.mpf, &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
+            mpfr_get_f(result.inner_mut(), &self.mpfr, mpfr_rnd_t::MPFR_RNDN);
             result
         }
     }
