@@ -568,6 +568,9 @@ impl<'a> Add<&'a Mpfr> for Mpfr {
     type Output = Mpfr;
     #[inline]
     fn add(mut self, other: &Mpfr) -> Mpfr {
+        if other.get_prec() > self.get_prec() {
+            return &self + other;
+        }
         unsafe {
             mpfr_add(&mut self.mpfr,
                      &self.mpfr,
@@ -718,6 +721,9 @@ impl<'a> Sub<&'a Mpfr> for Mpfr {
     type Output = Mpfr;
     #[inline]
     fn sub(mut self, other: &Mpfr) -> Mpfr {
+        if other.get_prec() > self.get_prec() {
+            return &self - other;
+        }
         unsafe {
             mpfr_sub(&mut self.mpfr,
                      &self.mpfr,
@@ -869,6 +875,9 @@ impl<'a> Mul<&'a Mpfr> for Mpfr {
 
     #[inline]
     fn mul(mut self, other: &Mpfr) -> Mpfr {
+        if other.get_prec() > self.get_prec() {
+            return &self * other;
+        }
         unsafe {
             mpfr_mul(&mut self.mpfr,
                      &self.mpfr,
@@ -1023,11 +1032,13 @@ impl<'a> Div<&'a Mpfr> for Mpfr {
     type Output = Mpfr;
     #[inline]
     fn div(mut self, other: &Mpfr) -> Mpfr {
+        if other.get_prec() > self.get_prec() {
+            return &self / other;
+        }
         unsafe {
             if mpfr_cmp_ui(&other.mpfr, 0) == 0 {
                 panic!("divide by zero")
             }
-
             mpfr_div(&mut self.mpfr,
                      &self.mpfr,
                      &other.mpfr,
