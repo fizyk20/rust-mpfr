@@ -1,6 +1,6 @@
 use rustc_serialize::json;
-
 use super::mpfr::Mpfr;
+use gmp::mpz::Mpz;
 
 #[test]
 fn test_set() {
@@ -212,6 +212,20 @@ fn test_to_string_new2_from_str() {
     let a: Mpfr = Mpfr::new2_from_str(128, "1.23456789123456789123456789123456789e5", 10).unwrap();
 
     assert!(a == Mpfr::new2_from_str(128, a.to_string(), 10).unwrap());
+}
+
+#[test]
+fn test_into() {
+    let a: Mpfr = mpfr!(0.1234);
+    let b: i64 = (&a).into();
+    assert_eq!(b, 0);
+    let c: f64 = (&a).into();
+    assert_eq!(c, 0.1234);
+    let d: u64 = (&a).into();
+    assert_eq!(d, 0);
+
+    let zero: Mpz = From::from(0i64);
+    assert_eq!(Into::<Mpz>::into(&a), zero);
 }
 
 #[test]
