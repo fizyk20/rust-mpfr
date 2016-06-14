@@ -55,12 +55,38 @@ fn test_add() {
     let b: Mpfr = From::<i64>::from(20);
     let result: Mpfr = From::<i64>::from(35);
 
-    assert!(&a + b == result);
+    assert!(&a + &b == result);
+    assert!(&a + b.clone() == result);
+    assert!(a.clone() + &b == result);
+    assert!(a.clone() + b.clone() == result);
     assert!(&a + 20 == result);
     assert!(20 + &a == result);
     assert!(&a + 20.0 == result);
     assert!(20.0 + &a == result);
+    assert!(a.clone() + 20 == result);
+    assert!(20 + a.clone() == result);
+    assert!(a.clone() + 20.0 == result);
+    assert!(20.0 + a.clone() == result);
 }
+
+#[test]
+fn test_add_prec() {
+    let high_prec = 128;
+    let a: Mpfr = Mpfr::new2_from_str(high_prec, "15", 10).unwrap();
+    let b: Mpfr = From::<i64>::from(20);
+
+    assert!((&a + &b).get_prec() == high_prec);
+    assert!((&b + &a).get_prec() == high_prec);
+    assert!((a.clone() + &b).get_prec() == high_prec);
+    assert!((b.clone() + &a).get_prec() == high_prec);
+    assert!((a.clone() + b.clone()).get_prec() == high_prec);
+    assert!((b.clone() + a.clone()).get_prec() == high_prec);
+    assert!((&a + 20).get_prec() == high_prec);
+    assert!((20 + &a).get_prec() == high_prec);
+    assert!((&a + 20.0).get_prec() == high_prec);
+    assert!((20.0 + &a).get_prec() == high_prec);
+}
+
 
 #[test]
 fn test_sub() {
@@ -69,10 +95,35 @@ fn test_sub() {
     let result: Mpfr = From::<i64>::from(-5);
 
     assert!(&a - &b == result);
+    assert!(&a - b.clone() == result);
+    assert!(a.clone() - &b == result);
+    assert!(a.clone() - b.clone() == result);
     assert!(&a - 20 == result);
     assert!(15 - &b == result);
     assert!(&a - 20.0 == result);
     assert!(15.0 - &b == result);
+    assert!(a.clone() - 20 == result);
+    assert!(15 - b.clone() == result);
+    assert!(a.clone() - 20.0 == result);
+    assert!(15.0 - b.clone() == result);
+}
+
+#[test]
+fn test_sub_prec() {
+    let high_prec = 128;
+    let a: Mpfr = Mpfr::new2_from_str(high_prec, "15", 10).unwrap();
+    let b: Mpfr = From::<i64>::from(20);
+
+    assert!((&a - &b).get_prec() == high_prec);
+    assert!((&b - &a).get_prec() == high_prec);
+    assert!((a.clone() - &b).get_prec() == high_prec);
+    assert!((b.clone() - &a).get_prec() == high_prec);
+    assert!((a.clone() - b.clone()).get_prec() == high_prec);
+    assert!((b.clone() - a.clone()).get_prec() == high_prec);
+    assert!((&a - 20).get_prec() == high_prec);
+    assert!((20 - &a).get_prec() == high_prec);
+    assert!((&a - 20.0).get_prec() == high_prec);
+    assert!((20.0 - &a).get_prec() == high_prec);
 }
 
 #[test]
@@ -81,11 +132,36 @@ fn test_mul() {
     let b: Mpfr = From::<i64>::from(20);
     let result: Mpfr = From::<i64>::from(300);
 
-    assert!(&a * b == result);
+    assert!(&a * &b == result);
+    assert!(&a * b.clone() == result);
+    assert!(a.clone() * &b == result);
+    assert!(a.clone() * b.clone() == result);
     assert!(&a * 20 == result);
     assert!(20 * &a == result);
     assert!(&a * 20.0 == result);
     assert!(20.0 * &a == result);
+    assert!(a.clone() * 20 == result);
+    assert!(20 * a.clone() == result);
+    assert!(a.clone() * 20.0 == result);
+    assert!(20.0 * a.clone() == result);
+}
+
+#[test]
+fn test_mul_prec() {
+    let high_prec = 128;
+    let a: Mpfr = Mpfr::new2_from_str(high_prec, "15", 10).unwrap();
+    let b: Mpfr = From::<i64>::from(20);
+
+    assert!((&a * &b).get_prec() == high_prec);
+    assert!((&b * &a).get_prec() == high_prec);
+    assert!((a.clone() * &b).get_prec() == high_prec);
+    assert!((b.clone() * &a).get_prec() == high_prec);
+    assert!((a.clone() * b.clone()).get_prec() == high_prec);
+    assert!((b.clone() * a.clone()).get_prec() == high_prec);
+    assert!((&a * 20).get_prec() == high_prec);
+    assert!((20 * &a).get_prec() == high_prec);
+    assert!((&a * 20.0).get_prec() == high_prec);
+    assert!((20.0 * &a).get_prec() == high_prec);
 }
 
 #[test]
@@ -95,10 +171,35 @@ fn test_div() {
     let result: Mpfr = From::<f64>::from(0.75);
 
     assert!(&a / &b == result);
+    assert!(&a / b.clone() == result);
+    assert!(a.clone() / &b == result);
+    assert!(a.clone() / b.clone() == result);
     assert!(&a / 20 == result);
     assert!(15 / &b == result);
     assert!(&a / 20.0 == result);
     assert!(15.0 / &b == result);
+    assert!(a.clone() / 20 == result);
+    assert!(15 / b.clone() == result);
+    assert!(a.clone() / 20.0 == result);
+    assert!(15.0 / b.clone() == result);
+}
+
+#[test]
+fn test_div_prec() {
+    let high_prec = 128;
+    let a: Mpfr = Mpfr::new2_from_str(high_prec, "15", 10).unwrap();
+    let b: Mpfr = From::<i64>::from(20);
+
+    assert!((&a / &b).get_prec() == high_prec);
+    assert!((&b / &a).get_prec() == high_prec);
+    assert!((a.clone() / &b).get_prec() == high_prec);
+    assert!((b.clone() / &a).get_prec() == high_prec);
+    assert!((a.clone() / b.clone()).get_prec() == high_prec);
+    assert!((b.clone() / a.clone()).get_prec() == high_prec);
+    assert!((&a / 20).get_prec() == high_prec);
+    assert!((20 / &a).get_prec() == high_prec);
+    assert!((&a / 20.0).get_prec() == high_prec);
+    assert!((20.0 / &a).get_prec() == high_prec);
 }
 
 #[test]
@@ -176,6 +277,45 @@ fn test_new2_from_str() {
 
         assert!(a - b < From::from(epsilon) || c - d > From::from(-epsilon));
     }
+}
+
+#[test]
+fn test_mpfr_default_prec() {
+    let default_prec = 53;
+
+    let a: Mpfr = Mpfr::new_from_str("1.234", 10).unwrap();
+    let b: Mpfr = From::from(1.234f64);
+    let c: Mpfr = From::from(-1i64);
+    let d: Mpfr = From::from(1u64);
+
+    assert!(a.get_prec() == default_prec);
+    assert!(b.get_prec() == default_prec);
+    assert!(c.get_prec() == default_prec);
+    assert!(d.get_prec() == default_prec);
+}
+
+#[test]
+fn test_mpfr_get_prec() {
+    let prec = 128;
+
+    let a: Mpfr = Mpfr::new2_from_str(prec, "1.234", 10).unwrap();
+    let b: Mpfr = Mpfr::new2(prec);
+
+    assert!(a.get_prec() == prec);
+    assert!(b.get_prec() == prec);
+}
+
+#[test]
+fn test_mpfr_set_prec() {
+    let new_prec = 128;
+    let mut a = Mpfr::new_from_str("1.234", 10).unwrap();
+
+    assert!(a.get_prec() != new_prec);
+
+    a.set_prec(new_prec);
+
+    assert!(a == Mpfr::nan());
+    assert!(a.get_prec() == new_prec);
 }
 
 #[test]
