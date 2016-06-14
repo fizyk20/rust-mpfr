@@ -148,6 +148,7 @@ impl fmt::Display for Mpfr {
 }
 
 unsafe impl Send for Mpfr { }
+unsafe impl Sync for Mpfr { }
 
 impl Drop for Mpfr {
     fn drop(&mut self) {
